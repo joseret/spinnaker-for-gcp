@@ -11,13 +11,13 @@ echo "  user:some-user@somedomain.net, serviceAccount:some-service-account@some-
 read -p "Member to add: " MEMBER_TO_ADD
 echo
 
-pushd ~/spinnaker-for-gcp/scripts/install
+pushd ~/cloudshell_open/spinnaker-for-gcp/scripts/install
 
 source ./properties
 
-~/spinnaker-for-gcp/scripts/manage/check_project_mismatch.sh
+~/cloudshell_open/spinnaker-for-gcp/scripts/manage/check_project_mismatch.sh
 
-source ~/spinnaker-for-gcp/scripts/expose/set_iap_properties.sh
+source ~/cloudshell_open/spinnaker-for-gcp/scripts/expose/set_iap_properties.sh
 
 gcurl() {
   curl -s -H "Authorization:Bearer $(gcloud auth print-access-token)" \
@@ -27,7 +27,7 @@ gcurl() {
 
 bold "Querying for existing IAM policy..."
 
-export EXISTING_IAM_POLICY=$(gcurl -X POST -d "{}" \
+export EXISTING_IAM_POLICY=$(gcurl -X POST -d "{"options":{"requested_policy_version":3}}" \
   https://iap.googleapis.com/v1beta1/projects/$PROJECT_NUMBER/iap_web/compute/services/$BACKEND_SERVICE_ID:getIamPolicy)
 
 if [ "$(echo $EXISTING_IAM_POLICY | grep "\"$MEMBER_TO_ADD\"")" ]; then

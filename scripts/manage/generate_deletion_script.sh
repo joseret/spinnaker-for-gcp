@@ -4,13 +4,13 @@ bold() {
   echo ". $(tput bold)" "$*" "$(tput sgr0)";
 }
 
-source ~/spinnaker-for-gcp/scripts/install/properties
+source ~/cloudshell_open/spinnaker-for-gcp/scripts/install/properties
 
 bold "Generating deletion script for $DEPLOYMENT_NAME in cluster $GKE_CLUSTER of project $PROJECT_ID..."
 
-~/spinnaker-for-gcp/scripts/manage/check_project_mismatch.sh
+~/cloudshell_open/spinnaker-for-gcp/scripts/manage/check_project_mismatch.sh
 
-DELETION_SCRIPT_FILENAME="$HOME/spinnaker-for-gcp/scripts/manage/delete-all_${PROJECT_ID}_${GKE_CLUSTER}_${DEPLOYMENT_NAME}.sh"
+DELETION_SCRIPT_FILENAME="$HOME/cloudshell_open/spinnaker-for-gcp/scripts/manage/delete-all_${PROJECT_ID}_${GKE_CLUSTER}_${DEPLOYMENT_NAME}.sh"
 
 SA_EMAIL=$(gcloud iam service-accounts --project $PROJECT_ID list \
   --filter="displayName:$SERVICE_ACCOUNT_NAME" \
@@ -41,7 +41,7 @@ bold "Deleting subscription $GCB_PUBSUB_SUBSCRIPTION in $PROJECT_ID..."
 gcloud pubsub subscriptions delete $GCB_PUBSUB_SUBSCRIPTION --project $PROJECT_ID
 
 bold "Deleting cloud function $CLOUD_FUNCTION_NAME in $PROJECT_ID..."
-gcloud functions delete $CLOUD_FUNCTION_NAME --project $PROJECT_ID
+gcloud functions delete $CLOUD_FUNCTION_NAME --region $REGION --project $PROJECT_ID
 
 bold "Deleting redis instance $REDIS_INSTANCE in $NETWORK_PROJECT..."
 gcloud redis instances delete $REDIS_INSTANCE --region $REGION --project $NETWORK_PROJECT
@@ -78,7 +78,7 @@ bold "Deleting static IP address $STATIC_IP_NAME in $PROJECT_ID..."
 gcloud compute addresses delete $STATIC_IP_NAME --global --project $PROJECT_ID
 
 bold "Deleting managed SSL certificate $MANAGED_CERT in project $PROJECT_ID..."
-gcloud beta compute ssl-certificates delete $MANAGED_CERT --project $PROJECT_ID
+gcloud beta compute ssl-certificates delete $MANAGED_CERT --global --project $PROJECT_ID
 
 bold "Deleting service endpoint $DOMAIN_NAME in project $PROJECT_ID..."
 gcloud endpoints services delete $DOMAIN_NAME --project $PROJECT_ID

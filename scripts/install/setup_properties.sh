@@ -12,7 +12,7 @@ bold() {
   echo ". $(tput bold)" "$*" "$(tput sgr0)";
 }
 
-~/spinnaker-for-gcp/scripts/manage/check_duplicate_dirs.sh || exit 1
+~/cloudshell_open/spinnaker-for-gcp/scripts/manage/check_duplicate_dirs.sh || exit 1
 
 if [ -z "$PROJECT_ID" ]; then
   PROJECT_ID=$(gcloud info --format='value(config.project)')
@@ -23,7 +23,7 @@ if [ -z "$PROJECT_ID" ]; then
   exit 1
 fi
 
-PROPERTIES_FILE="$HOME/spinnaker-for-gcp/scripts/install/properties"
+PROPERTIES_FILE="$HOME/cloudshell_open/spinnaker-for-gcp/scripts/install/properties"
 if [ -f "$PROPERTIES_FILE" ]; then
   bold "The properties file already exists at $PROPERTIES_FILE. Please move it out of the way if you want to generate a new properties file."
   exit 1
@@ -53,10 +53,10 @@ fi
 
 NETWORK="default"
 SUBNET="default"
-ZONE=${ZONE:-us-west1-b}
+ZONE=${ZONE:-us-east1-c}
 REGION=$(echo $ZONE | cut -d - -f 1,2)
 
-source ~/spinnaker-for-gcp/scripts/manage/service_utils.sh
+source ~/cloudshell_open/spinnaker-for-gcp/scripts/manage/service_utils.sh
 
 query_redis_instance_names() {
   if [ $(has_service_enabled $1 redis.googleapis.com) ]; then
@@ -91,7 +91,7 @@ while [[ "$(echo "$EXISTING_REDIS_NAMES" | grep ^$NEW_DEPLOYMENT_NAME$ | wc -l)"
   NEW_DEPLOYMENT_NAME="spinnaker-$((++NEW_DEPLOYMENT_SUFFIX))"
 done
 
-cat > ~/spinnaker-for-gcp/scripts/install/properties <<EOL
+cat > ~/cloudshell_open/spinnaker-for-gcp/scripts/install/properties <<EOL
 #!/usr/bin/env bash
 
 # This file is generated just once per Spinnaker installation, prior to running setup.sh.
@@ -106,8 +106,8 @@ cat > ~/spinnaker-for-gcp/scripts/install/properties <<EOL
 export PROJECT_ID=$PROJECT_ID
 export DEPLOYMENT_NAME=${DEPLOYMENT_NAME:-$NEW_DEPLOYMENT_NAME}
 
-export SPINNAKER_VERSION=1.14.11
-export HALYARD_VERSION=1.22.1
+export SPINNAKER_VERSION=1.19.3
+export HALYARD_VERSION=1.33.0
 
 export ZONE=$ZONE
 export REGION=$REGION
@@ -120,7 +120,7 @@ export SUBNET=$SUBNET
 EOL
 
 if [ "$SHARED_VPC_HOST_PROJECT" ]; then
-  cat >> ~/spinnaker-for-gcp/scripts/install/properties <<EOL
+  cat >> ~/cloudshell_open/spinnaker-for-gcp/scripts/install/properties <<EOL
 # If you want to use a shared network/subnet from the Shared VPC host project, you'll need to perform
 # these steps prior to running the setup.sh script:
 #   1) Specify the name of the shared network in \$NETWORK up above.
@@ -133,26 +133,26 @@ if [ "$SHARED_VPC_HOST_PROJECT" ]; then
 EOL
 fi
 
-cat >> ~/spinnaker-for-gcp/scripts/install/properties <<EOL
+cat >> ~/cloudshell_open/spinnaker-for-gcp/scripts/install/properties <<EOL
 export NETWORK_PROJECT=\$PROJECT_ID
 export NETWORK_REFERENCE=projects/\$NETWORK_PROJECT/global/networks/\$NETWORK
 export SUBNET_REFERENCE=projects/\$NETWORK_PROJECT/regions/\$REGION/subnetworks/\$SUBNET
 EOL
 
 if [ "$SHARED_VPC_HOST_PROJECT" ]; then
-  cat >> ~/spinnaker-for-gcp/scripts/install/properties <<EOL
+  cat >> ~/cloudshell_open/spinnaker-for-gcp/scripts/install/properties <<EOL
 export CLUSTER_SECONDARY_RANGE_NAME=
 export SERVICES_SECONDARY_RANGE_NAME=
 EOL
 fi
 
-cat >> ~/spinnaker-for-gcp/scripts/install/properties <<EOL
+cat >> ~/cloudshell_open/spinnaker-for-gcp/scripts/install/properties <<EOL
 
 # If cluster does not exist, it will be created.
 export GKE_CLUSTER=${GKE_CLUSTER:-\$DEPLOYMENT_NAME}
 
 # These are only considered if a new GKE cluster is being created.
-export GKE_CLUSTER_VERSION=1.12.7
+export GKE_CLUSTER_VERSION=1.14.10
 export GKE_MACHINE_TYPE=n1-highmem-4
 export GKE_DISK_TYPE=pd-standard
 export GKE_DISK_SIZE=100
@@ -193,7 +193,7 @@ export SECRET_NAME=\$DEPLOYMENT_NAME-oauth-client-secret
 
 # If you own a domain name and want to use that instead of this automatically-assigned one,
 # specify it here (you must be able to configure the dns settings).
-export DOMAIN_NAME=\$DEPLOYMENT_NAME.endpoints.$PROJECT_ID.cloud.goog
+export DOMAIN_NAME=\$DEPLOYMENT_NAME.endpoints.\$PROJECT_ID.cloud.goog
 
 # This email address will be granted permissions as an IAP-Secured Web App User.
 export IAP_USER=$(gcloud auth list --format="value(account)" --filter="status=ACTIVE")
@@ -203,5 +203,5 @@ if [ "$SHARED_VPC_HOST_PROJECT" ]; then
   bold "If you want to use a shared network/subnet from the Shared VPC host project ($SHARED_VPC_HOST_PROJECT)," \
     "there are additional instructions you must follow in the properties file. You must perform those steps" \
     "prior to running the setup.sh script:"
-  bold "  cloudshell edit ~/spinnaker-for-gcp/scripts/install/properties"
+  bold "  cloudshell edit ~/cloudshell_open/spinnaker-for-gcp/scripts/install/properties"
 fi

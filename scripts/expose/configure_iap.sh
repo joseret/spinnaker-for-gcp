@@ -4,11 +4,11 @@ bold() {
   echo ". $(tput bold)" "$*" "$(tput sgr0)";
 }
 
-pushd ~/spinnaker-for-gcp/scripts
+pushd ~/cloudshell_open/spinnaker-for-gcp/scripts
 
 source ./install/properties
 
-~/spinnaker-for-gcp/scripts/manage/check_project_mismatch.sh
+~/cloudshell_open/spinnaker-for-gcp/scripts/manage/check_project_mismatch.sh
 
 EXISTING_SECRET_NAME=$(kubectl get secret -n spinnaker \
   --field-selector metadata.name=="$SECRET_NAME" \
@@ -77,7 +77,7 @@ gcurl() {
     -H "X-Goog-User-Project: $PROJECT_ID" $*
 }
 
-export IAP_IAM_POLICY_ETAG=$(gcurl -X POST -d "{}" \
+export IAP_IAM_POLICY_ETAG=$(gcurl -X POST -d "{"options":{"requested_policy_version":3}}" \
   https://iap.googleapis.com/v1beta1/projects/$PROJECT_NUMBER/iap_web/compute/services/$BACKEND_SERVICE_ID:getIamPolicy | jq .etag)
 
 cat expose/iap_policy.json | envsubst | gcurl -X POST -d @- \
@@ -87,8 +87,8 @@ bold "Configuring Spinnaker security settings..."
 
 cat expose/configure_hal_security.sh | envsubst | bash
 
-~/spinnaker-for-gcp/scripts/manage/update_landing_page.sh
-~/spinnaker-for-gcp/scripts/manage/push_and_apply.sh
+~/cloudshell_open/spinnaker-for-gcp/scripts/manage/update_landing_page.sh
+~/cloudshell_open/spinnaker-for-gcp/scripts/manage/push_and_apply.sh
 
 bold "ACTION REQUIRED:"
 bold "  - Navigate to: https://console.developers.google.com/apis/credentials/oauthclient/$CLIENT_ID?project=$PROJECT_ID"

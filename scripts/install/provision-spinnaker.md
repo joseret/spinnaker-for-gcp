@@ -9,22 +9,33 @@ Select the project in which you'll install Spinnaker, then click **Start**, belo
 
 ## Spinnaker Installation
 
-Now let's provision Spinnaker within {{project-id}}.
+Click the **Copy to Cloud Shell** button for each command below, then press **Enter**
+to run each commmand.
 
-Click the copy/paste button on the command below to copy that command to your shell,
-then press **Enter** to run it from the Shell.
+### Configure Git
 
-### Configure the environment.
+If you haven't already configured Git, use the commands below to do so now.
+Replace `[EMAIL_ADDRESS]` with your Git email address, and replace `[USERNAME]`
+with your Git username.
 
 ```bash
-PROJECT_ID={{project-id}} ~/spinnaker-for-gcp/scripts/install/setup_properties.sh
+git config --global user.email "[EMAIL_ADDRESS]"
+git config --global user.name "[USERNAME]"
+```
+
+### Configure the environment
+
+Now let's provision Spinnaker within your project {{project-id}}.
+
+```bash
+PROJECT_ID={{project-id}} ~/cloudshell_open/spinnaker-for-gcp/scripts/install/setup_properties.sh
 ```
 
 After that script finishes, you can use the command below to open the properties file for your Spinnaker
 installation. This is optional.
 
 ```bash
-cloudshell edit ~/spinnaker-for-gcp/scripts/install/properties
+cloudshell edit ~/cloudshell_open/spinnaker-for-gcp/scripts/install/properties
 ```
 
 **Proceed with caution**. If you edit this file, the installation might not work
@@ -35,7 +46,7 @@ as expected.
 **This will take some time**
 
 ```bash
-~/spinnaker-for-gcp/scripts/install/setup.sh
+~/cloudshell_open/spinnaker-for-gcp/scripts/install/setup.sh
 ```
 
 Watch the Cloud Shell command line to see when it completes, then click
@@ -57,17 +68,12 @@ Don't use the `hal deploy connect` command. Instead, use the following command
 only.
 
 ```bash
-~/spinnaker-for-gcp/scripts/manage/connect_unsecured.sh
+~/cloudshell_open/spinnaker-for-gcp/scripts/manage/connect_unsecured.sh
 ```
 
-To connect to the Deck UI, click the link below, which highlights the Preview
-button above.
+To connect to the Deck UI, click on the Preview button above and select "Preview on port 8080":
 
-<walkthrough-spotlight-pointer
-    spotlightId="devshell-web-preview-button"
-    text="Connect to Spinnaker via 'Preview on port 8080'">
-</walkthrough-spotlight-pointer>
-
+![Image](https://github.com/GoogleCloudPlatform/spinnaker-for-gcp/raw/master/scripts/manage/preview_button.png)
 
 ### Expose Spinnaker publicly
 
@@ -77,7 +83,7 @@ expose it via a secure domain behind the [Identity-Aware Proxy](https://cloud.go
 Note that this phase could take 30-60 minutes. **Spinnaker will be inaccessible during this time.**
 
 ```bash
-~/spinnaker-for-gcp/scripts/expose/configure_endpoint.sh
+~/cloudshell_open/spinnaker-for-gcp/scripts/expose/configure_endpoint.sh
 ```
 
 ## Next steps: manage Spinnaker
@@ -102,5 +108,5 @@ configure Spinnaker
 To start managing Spinnaker:
 
 ```bash
-~/spinnaker-for-gcp/scripts/manage/update_console.sh
+~/cloudshell_open/spinnaker-for-gcp/scripts/manage/update_console.sh
 ```
